@@ -1,0 +1,18 @@
+[package]
+name = "rust_wordcount"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+regex = "1.10"
+
+[dev-dependencies]
+criterion = "0.5"
+
+[[bin]]
+name = "wordcount"
+path = "src/main.rs"
+
+[[bench]]
+name = "wordcount_bench"
+harness = false
