@@ -12,7 +12,7 @@ struct WordCounter {
 impl WordCounter {
     fn new() -> Self {
         Self {
-            re: Regex::new(r"([^ \t\n\r\f]+)").unwrap(),
+            re: Regex::new(r"([A-Za-z]+)").unwrap(),
         }
     }
 
@@ -29,9 +29,9 @@ impl WordCounter {
 
 // Logos-based token definition
 #[derive(Logos, Debug, PartialEq)]
-#[logos(skip r"[ \t\n\r\f]+")]
+#[logos(skip r"[ \n.]+")]
 enum Token {
-    #[regex(r"[^ \t\n\r\f]+")]
+    #[regex(r"[A-Za-z]+")]
     Word,
 }
 

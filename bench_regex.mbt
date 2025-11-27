@@ -15,7 +15,7 @@ fn scan_words_bytes(
   words : Int,
 ) -> Int {
   lexmatch input {
-    (_, "[^ \t\n\r\f]+", next) => {
+    ("[ \n.]*[A-Za-z]+", next) => {
       scan_words_bytes(next, words + 1)
     }
     _ => words
