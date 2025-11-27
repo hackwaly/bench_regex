@@ -31,7 +31,7 @@ impl WordCounter {
 #[derive(Logos, Debug, PartialEq)]
 #[logos(skip r"[ \t\n\f]+")]
 enum Token {
-    #[regex(r"\w+")]
+    #[regex(r"[A-Za-z_0-9]+")]
     Word,
 }
 
