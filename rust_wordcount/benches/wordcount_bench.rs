@@ -12,7 +12,7 @@ struct WordCounter {
 impl WordCounter {
     fn new() -> Self {
         Self {
-            re: Regex::new(r"(\w+)").unwrap(),
+            re: Regex::new(r"([^ \t\n\r\f]+)").unwrap(),
         }
     }
 
@@ -29,9 +29,9 @@ impl WordCounter {
 
 // Logos-based token definition
 #[derive(Logos, Debug, PartialEq)]
-#[logos(skip r"[ \t\n\f]+")]
+#[logos(skip r"[ \t\n\r\f]+")]
 enum Token {
-    #[regex(r"[A-Za-z_0-9]+")]
+    #[regex(r"[^ \t\n\r\f]+")]
     Word,
 }
 
@@ -45,37 +45,6 @@ impl LogosWordCounter {
 
         while let Some(Ok(Token::Word)) = lex.next() {
             words += 1;
-        }
-
-        (0, words, 0)
-    }
-}
-
-// Logos-based token definition without skip (all tokens explicitly defined)
-#[derive(Logos, Debug, PartialEq)]
-enum TokenNoSkip {
-    #[regex(r"\w+")]
-    Word,
-
-    #[regex(r"[ \t\n\f]+")]
-    Whitespace,
-
-    #[regex(r"[^\w \t\n\f]+")]
-    Other,
-}
-
-// Logos-based word counter without skip
-struct LogosWordCounterNoSkip;
-
-impl LogosWordCounterNoSkip {
-    fn count(input: &str) -> (usize, usize, usize) {
-        let mut words = 0;
-        let mut lex = TokenNoSkip::lexer(input);
-
-        while let Some(token) = lex.next() {
-            if let Ok(TokenNoSkip::Word) = token {
-                words += 1;
-            }
         }
 
         (0, words, 0)
@@ -109,11 +78,6 @@ fn criterion_benchmark(c: &mut Criterion) {
     // Logos-based implementation
     group.bench_function("logos", |b| {
         b.iter(|| LogosWordCounter::count(black_box(TEST_STRING)))
-    });
-
-    // Logos-based implementation without skip
-    group.bench_function("logos_no_skip", |b| {
-        b.iter(|| LogosWordCounterNoSkip::count(black_box(TEST_STRING)))
     });
 
     group.finish();
