@@ -1,13 +1,13 @@
-///|
-fn scan_words(
-  input : StringView,
-  words : Int,
-) -> Int {
-  lexmatch input {
-    (_, "\w+" as _word, next) => scan_words(next, words + 1)
-    _ => words
-  }
-}
+// ///|
+// fn scan_words(
+//   input : StringView,
+//   words : Int,
+// ) -> Int {
+//   lexmatch input {
+//     (_, "\w+" as _word, next) => scan_words(next, words + 1)
+//     _ => words
+//   }
+// }
 
 ///|
 fn scan_words_bytes(
@@ -15,14 +15,14 @@ fn scan_words_bytes(
   words : Int,
 ) -> Int {
   lexmatch input {
-    (_, "\w+" as _word, next) => scan_words_bytes(next, words + 1)
+    ("[ \t\r\f]*[A-Za-z_0-9]+", next) => scan_words_bytes(next, words + 1)
     _ => words
   }
 }
 
 ///|
 const TEST_BYTES = b"Non enim laborum velit commodo deserunt incididunt elit sunt nulla ullamco. Quis ipsum aliqua id mollit minim velit et cupidatat eiusmod nostrud pariatur duis irure ad. Dolore enim et elit fugiat.\nNostrud elit minim aute qui labore id aute aute ea nostrud cupidatat. Aliquip et commodo anim dolor nostrud voluptate proident. Voluptate tempor amet consequat nisi excepteur aute anim aute. Sunt ipsum tempor esse consequat cupidatat.\nIpsum minim cillum adipisicing incididunt incididunt qui non excepteur mollit qui. Non aute sunt dolore eu sunt ea aute nisi dolor eiusmod. Fugiat id culpa exercitation consectetur cupidatat. Sunt sint nostrud dolor aute sit cupidatat voluptate reprehenderit ut cillum nulla. Dolore sunt elit elit et quis qui.\n"
-const TEST_STRING = "Non enim laborum velit commodo deserunt incididunt elit sunt nulla ullamco. Quis ipsum aliqua id mollit minim velit et cupidatat eiusmod nostrud pariatur duis irure ad. Dolore enim et elit fugiat.\nNostrud elit minim aute qui labore id aute aute ea nostrud cupidatat. Aliquip et commodo anim dolor nostrud voluptate proident. Voluptate tempor amet consequat nisi excepteur aute anim aute. Sunt ipsum tempor esse consequat cupidatat.\nIpsum minim cillum adipisicing incididunt incididunt qui non excepteur mollit qui. Non aute sunt dolore eu sunt ea aute nisi dolor eiusmod. Fugiat id culpa exercitation consectetur cupidatat. Sunt sint nostrud dolor aute sit cupidatat voluptate reprehenderit ut cillum nulla. Dolore sunt elit elit et quis qui.\n"
+// const TEST_STRING = "Non enim laborum velit commodo deserunt incididunt elit sunt nulla ullamco. Quis ipsum aliqua id mollit minim velit et cupidatat eiusmod nostrud pariatur duis irure ad. Dolore enim et elit fugiat.\nNostrud elit minim aute qui labore id aute aute ea nostrud cupidatat. Aliquip et commodo anim dolor nostrud voluptate proident. Voluptate tempor amet consequat nisi excepteur aute anim aute. Sunt ipsum tempor esse consequat cupidatat.\nIpsum minim cillum adipisicing incididunt incididunt qui non excepteur mollit qui. Non aute sunt dolore eu sunt ea aute nisi dolor eiusmod. Fugiat id culpa exercitation consectetur cupidatat. Sunt sint nostrud dolor aute sit cupidatat voluptate reprehenderit ut cillum nulla. Dolore sunt elit elit et quis qui.\n"
 
 // ///|
 // extern "js" fn wordcount_js(input : String) -> Unit =
@@ -46,10 +46,10 @@ const TEST_STRING = "Non enim laborum velit commodo deserunt incididunt elit sun
 
 ///|
 test (b : @bench.T) {
-  b.bench(name="lexmatch", () => {
-    let _ = scan_words(TEST_STRING, 0)
+  // b.bench(name="lexmatch", () => {
+  //   let _ = scan_words(TEST_STRING, 0)
 
-  })
+  // })
   b.bench(name="lexmatch_bytes", () => {
     let _ = scan_words_bytes(TEST_BYTES, 0)
 
@@ -61,7 +61,7 @@ test (b : @bench.T) {
 
 ///|
 test {
-  let words = scan_words(TEST_STRING, 0)
+  let words = scan_words_bytes(TEST_BYTES, 0)
   println("\{words}")
   // let _ = wordcount_js(TEST_STRING)
 }
