@@ -51,6 +51,37 @@ impl LogosWordCounter {
     }
 }
 
+// Logos-based token definition without skip (all tokens explicitly defined)
+#[derive(Logos, Debug, PartialEq)]
+enum TokenNoSkip {
+    #[regex(r"\w+")]
+    Word,
+
+    #[regex(r"[ \t\n\f]+")]
+    Whitespace,
+
+    #[regex(r"[^\w \t\n\f]+")]
+    Other,
+}
+
+// Logos-based word counter without skip
+struct LogosWordCounterNoSkip;
+
+impl LogosWordCounterNoSkip {
+    fn count(input: &str) -> (usize, usize, usize) {
+        let mut words = 0;
+        let mut lex = TokenNoSkip::lexer(input);
+
+        while let Some(token) = lex.next() {
+            if let Ok(TokenNoSkip::Word) = token {
+                words += 1;
+            }
+        }
+
+        (0, words, 0)
+    }
+}
+
 fn criterion_benchmark(c: &mut Criterion) {
     let mut group = c.benchmark_group("wordcount_implementations");
 
@@ -78,6 +109,11 @@ fn criterion_benchmark(c: &mut Criterion) {
     // Logos-based implementation
     group.bench_function("logos", |b| {
         b.iter(|| LogosWordCounter::count(black_box(TEST_STRING)))
+    });
+
+    // Logos-based implementation without skip
+    group.bench_function("logos_no_skip", |b| {
+        b.iter(|| LogosWordCounterNoSkip::count(black_box(TEST_STRING)))
     });
 
     group.finish();
