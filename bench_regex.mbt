@@ -8,6 +8,7 @@ fn scan_words(
     _ => words
   }
 }
+
 ///|
 fn scan_words_bytes(
   input : BytesView,

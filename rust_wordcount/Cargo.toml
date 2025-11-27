@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 regex = "1.10"
+logos = "0.14"
 
 [dev-dependencies]
 criterion = "0.5"

@@ -1,5 +1,6 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use regex::{Regex};
+use logos::Logos;
 
 const TEST_STRING: &str = "Non enim laborum velit commodo deserunt incididunt elit sunt nulla ullamco. Quis ipsum aliqua id mollit minim velit et cupidatat eiusmod nostrud pariatur duis irure ad. Dolore enim et elit fugiat.\nNostrud elit minim aute qui labore id aute aute ea nostrud cupidatat. Aliquip et commodo anim dolor nostrud voluptate proident. Voluptate tempor amet consequat nisi excepteur aute anim aute. Sunt ipsum tempor esse consequat cupidatat.\nIpsum minim cillum adipisicing incididunt incididunt qui non excepteur mollit qui. Non aute sunt dolore eu sunt ea aute nisi dolor eiusmod. Fugiat id culpa exercitation consectetur cupidatat. Sunt sint nostrud dolor aute sit cupidatat voluptate reprehenderit ut cillum nulla. Dolore sunt elit elit et quis qui.\n";
 
@@ -19,6 +20,30 @@ impl WordCounter {
         let mut words = 0;
 
         for _cap in self.re.captures_iter(input) {
+            words += 1;
+        }
+
+        (0, words, 0)
+    }
+}
+
+// Logos-based token definition
+#[derive(Logos, Debug, PartialEq)]
+#[logos(skip r"[ \t\n\f]+")]
+enum Token {
+    #[regex(r"\w+")]
+    Word,
+}
+
+// Logos-based word counter
+struct LogosWordCounter;
+
+impl LogosWordCounter {
+    fn count(input: &str) -> (usize, usize, usize) {
+        let mut words = 0;
+        let mut lex = Token::lexer(input);
+
+        while let Some(Ok(Token::Word)) = lex.next() {
             words += 1;
         }
 
@@ -48,6 +73,11 @@ fn criterion_benchmark(c: &mut Criterion) {
     group.bench_function("precompiled", |b| {
         let counter = WordCounter::new();
         b.iter(|| counter.count(black_box(TEST_STRING)))
+    });
+
+    // Logos-based implementation
+    group.bench_function("logos", |b| {
+        b.iter(|| LogosWordCounter::count(black_box(TEST_STRING)))
     });
 
     group.finish();
